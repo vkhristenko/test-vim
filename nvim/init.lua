@@ -48,6 +48,22 @@ local function init_global_before_plugins()
 	vim.opt.background = "dark"
 end
 
+local function apply_cursorline_contrast()
+	if vim.o.background == "dark" then
+		vim.api.nvim_set_hl(0, "CursorLine", { bg = "#2b3444" })
+		vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ffd166", bold = true })
+	else
+		vim.api.nvim_set_hl(0, "CursorLine", { bg = "#d9e2ef" })
+		vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#005f87", bold = true })
+	end
+end
+
+local cursorline_group = vim.api.nvim_create_augroup("CursorLineContrast", { clear = true })
+vim.api.nvim_create_autocmd("ColorScheme", {
+	group = cursorline_group,
+	callback = apply_cursorline_contrast,
+})
+
 -- Comment out visual selection with a prefix, skipping already-commented lines.
 -- Usage: visually select lines, then press your mapped key.
 local function comment_selection(prefix)
@@ -184,6 +200,7 @@ local function setup_colorscheme()
 end
 
 init_global_before_plugins()
+apply_cursorline_contrast()
 init_remaps_before_plugins()
 load_plugins()
 setup_lsp_clangd()

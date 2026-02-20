@@ -1,3 +1,5 @@
+local M = {}
+
 -- Function to initialize global settings before plugins
 local function init_global_before_plugins()
 	-- Leader (useful later)
@@ -199,11 +201,15 @@ local function setup_colorscheme()
 	vim.cmd("colorscheme vscode")
 end
 
-init_global_before_plugins()
-apply_cursorline_contrast()
-init_remaps_before_plugins()
-load_plugins()
-setup_lsp_clangd()
-setup_telescopr()
-setup_lsp_pyright()
-setup_colorscheme()
+function M.setup()
+    init_global_before_plugins()
+    apply_cursorline_contrast()
+    init_remaps_before_plugins()
+    load_plugins()
+    setup_lsp_clangd()
+    setup_telescopr()
+    setup_lsp_pyright()
+    setup_colorscheme()
+end
+
+return M

@@ -24,12 +24,26 @@ local function init_global_before_plugins()
 	vim.opt.wrap = true
 	vim.opt.linebreak = true
 	vim.opt.breakindent = true
+    vim.opt.showbreak = "↳ "
+    vim.opt.breakindentopt = "shift:4"
 	vim.opt.textwidth = 90
 	vim.opt.colorcolumn = "91"
 	vim.opt.scrolloff = 8
 	vim.opt.sidescrolloff = 8
 	vim.opt.splitbelow = true
 	vim.opt.splitright = true
+
+    -- Tree view
+    vim.g.netrw_liststyle = 3
+
+    -- Remove banner at top
+    vim.g.netrw_banner = 0
+
+    -- Better window size (25% of screen)
+    vim.g.netrw_winsize = 25
+
+    vim.g.netrw_keepdir = 1
+    vim.opt.autochdir = false
 
 	vim.opt.ignorecase = true
 	vim.opt.smartcase = true
@@ -164,6 +178,7 @@ local function load_plugins()
 		  dependencies = { "nvim-lua/plenary.nvim",},
 	  },
 	  { "sharkdp/fd" },
+      {"nvim-tree/nvim-tree.lua"},
 	})
 end
 
@@ -201,6 +216,28 @@ local function setup_colorscheme()
 	vim.cmd("colorscheme vscode")
 end
 
+local function setup_nvim_tree()
+    vim.g.loaded_netrw = 1
+    vim.g.loaded_netrwPlugin = 1
+
+  local config = {
+      renderer = {
+    icons = {
+      glyphs = {
+        folder = {
+          arrow_closed = ">",
+          arrow_open = "v",
+          default = "[+]",
+          open = "[-]",
+        },
+        default = "",
+      },
+    },
+  },
+  }
+  require("nvim-tree").setup(config)
+end
+
 function M.setup()
     init_global_before_plugins()
     apply_cursorline_contrast()
@@ -210,6 +247,7 @@ function M.setup()
     setup_telescopr()
     setup_lsp_pyright()
     setup_colorscheme()
+    setup_nvim_tree()
 end
 
 return M

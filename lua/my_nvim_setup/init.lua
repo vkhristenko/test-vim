@@ -178,7 +178,15 @@ local function load_plugins()
 		  dependencies = { "nvim-lua/plenary.nvim",},
 	  },
 	  { "sharkdp/fd" },
-      {"nvim-tree/nvim-tree.lua"},
+      {"nvim-neo-tree/neo-tree.nvim"},
+      {
+          "nvim-neo-tree/neo-tree.nvim",
+          branch = "v3.x",
+          dependencies = {
+              "nvim-lua/plenary.nvim",
+              "MunifTanjim/nui.nvim",
+          },
+      },
 	})
 end
 
@@ -216,26 +224,39 @@ local function setup_colorscheme()
 	vim.cmd("colorscheme vscode")
 end
 
-local function setup_nvim_tree()
-    vim.g.loaded_netrw = 1
-    vim.g.loaded_netrwPlugin = 1
-
-  local config = {
-      renderer = {
-    icons = {
-      glyphs = {
-        folder = {
-          arrow_closed = ">",
-          arrow_open = "v",
-          default = "[+]",
-          open = "[-]",
-        },
-        default = "",
-      },
+local function setup_neo_tree()
+    require("neo-tree").setup({
+        enable_git_status = false,
+        enable_diagnostics = false,
+        default_component_configs = {
+            icon = {
+                enabled = false,   -- disable all icons
+            },
+            indent = {
+                expander_collapsed = ">",   -- closed folder
+                expander_expanded  = "v",   -- open folder
+            },
+            size = {
+                enabled = true,
+                required_width = 0,
+                align = "right",   -- ✅ this right-aligns the size text
+            },
+    icon = {
+      enabled = true,
+      folder_closed = "[+]",
+      folder_open   = "[-]",
+      folder_empty  = "[+]",
+      default = "  ",   -- file icon (blank for clean look)
     },
-  },
-  }
-  require("nvim-tree").setup(config)
+        },
+        window = {
+            position = "current",
+        },
+        filesystem = {
+            hijack_netrw_behavior = "open_current",
+        }
+        ,
+    })
 end
 
 function M.setup()
@@ -247,7 +268,7 @@ function M.setup()
     setup_telescopr()
     setup_lsp_pyright()
     setup_colorscheme()
-    setup_nvim_tree()
+    setup_neo_tree()
 end
 
 return M

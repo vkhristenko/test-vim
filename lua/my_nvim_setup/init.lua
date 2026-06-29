@@ -72,13 +72,15 @@ local function apply_cursorline_contrast()
 		vim.api.nvim_set_hl(0, "CursorLine", { bg = "#d9e2ef" })
 		vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#005f87", bold = true })
 	end
+    
+    local cursorline_group = vim.api.nvim_create_augroup("CursorLineContrast", { clear = true })
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        group = cursorline_group,
+        callback = apply_cursorline_contrast,
+    })
 end
 
-local cursorline_group = vim.api.nvim_create_augroup("CursorLineContrast", { clear = true })
-vim.api.nvim_create_autocmd("ColorScheme", {
-	group = cursorline_group,
-	callback = apply_cursorline_contrast,
-})
+
 
 -- Comment out visual selection with a prefix, skipping already-commented lines.
 -- Usage: visually select lines, then press your mapped key.
@@ -148,6 +150,9 @@ end
 local function init_remaps_before_plugins()
 	vim.keymap.set("n", "G", "G0", { noremap = true })
 	local map = vim.keymap.set
+    local comment_hash = function()
+        comment_selection("# ")
+    end
 
 	-- Use x-mode (visual only) to avoid select-mode edge cases.
 	map("x", "<leader>/", function()
@@ -156,9 +161,9 @@ local function init_remaps_before_plugins()
 	map("x", '<leader>"', function()
 		comment_selection('" ')
 	end, { silent = true, desc = 'Comment " ' })
-	map("x", "<leader>#", function()
-		comment_selection("# ")
-	end, { silent = true, desc = "Comment # " })
+	map("x", "<leader>#", comment_hash, { silent = true, desc = "Comment # " })
+    map("x", "<leader>3", comment_hash, { silent = true, desc = "Comment # " })
+    map("x", "<leader>p", comment_hash, { silent = true, desc = "Comment Python " })
 
 	map("n", "<leader>vs6", function()
 		split_window_into_n(6)

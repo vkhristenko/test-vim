@@ -368,9 +368,23 @@ local function setup_telescope()
 end
 
 local function setup_lsp_clangd()
-	vim.lsp.config("clangd", {
-		cmd = { "clangd", "--background-index", "--clang-tidy" },
-	})
+    local cwd = vim.fn.getcwd()
+    local build_dir
+
+    if vim.fn.filereadable(cwd .. "/compile_commands.json") == 1 then
+        build_dir = cwd
+    elseif vim.env.CMAKE_BUILD_DIR and vim.env.CMAKE_BUILD_DIR ~= "" then
+        build_dir = vim.env.CMAKE_BUILD_DIR
+    end
+
+    local cmd = { "clangd", "--background-index", "--clang-tidy" }
+    if build_dir then
+        table.insert(cmd, "--compile-commands-dir=" .. build_dir)
+    end
+
+    vim.lsp.config("clangd", {
+        cmd = cmd,
+    })
 	vim.lsp.enable("clangd")
 	vim.o.updatetime = 250
 	vim.cmd([[autocmd CursorHold * lua vim.diagnostic.open_float(nil, {focus=false})]])
